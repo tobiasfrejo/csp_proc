@@ -41,17 +41,16 @@ typedef enum {
 } unary_op_t;
 
 typedef enum {
-	OP_ADD,   // +
-	OP_SUB,   // -
-	OP_MUL,   // *
-	OP_DIV,   // /
-	OP_MOD,   // %
-	OP_LSH,   // <<
-	OP_RSH,   // >>
-	OP_AND,   // &
-	OP_OR,    // |
-	OP_XOR,   // ^
-	OP_NOTB,  // ~
+	OP_ADD,  // +
+	OP_SUB,  // -
+	OP_MUL,  // *
+	OP_DIV,  // /
+	OP_MOD,  // %
+	OP_LSH,  // <<
+	OP_RSH,  // >>
+	OP_AND,  // &
+	OP_OR,   // |
+	OP_XOR,  // ^
 } binary_op_t;
 
 typedef struct {

@@ -1,1 +1,9 @@
 option('slash', type: 'boolean', value: false, description: 'Build slash (yields)', yield: true)
+option('freertos', type: 'boolean', value: false, description: 'Build the default FreeRTOS-based runtime (yields)', yield: true)
+option('proc_analysis', type: 'boolean', value: false, description: 'Build the analysis module')
+
+option('RESERVED_PROC_SLOTS', type : 'string', value : '', description : 'The number of reserved procedure slots.')
+option('MAX_PROC_BLOCK_TIMEOUT_MS', type : 'string', value : '', description : 'The maximum time block instructions will wait before timing out.')
+option('MIN_PROC_BLOCK_PERIOD_MS', type : 'string', value : '', description : 'The minimum time between evaluating the condition of a block instruction.')
+option('MAX_PROC_RECURSION_DEPTH', type : 'string', value : '', description : 'The maximum recursion depth of a procedure.')
+option('MAX_PROC_CONCURRENT', type : 'string', value : '', description : 'The maximum number of procedures runtimes that can run concurrently.')

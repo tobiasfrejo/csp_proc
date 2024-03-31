@@ -8,11 +8,18 @@ csp_proc_inc = include_directories('include')
 csp_proc_src = files([
 	'src/proc_client.c',
     'src/proc_pack.c',
-    'src/proc_runtime_FreeRTOS.c',
     'src/proc_server.c',
     'src/proc_store.c',
 ])
 
+# Static & dynamic analysis
+if get_option('proc_analysis') == true
+	csp_proc_src += files([
+		'src/proc_analyze.c',
+	])
+endif
+
+# Slash shell / command-parser
 slash_dep = []
 if get_option('slash') == true
 	slash_dep = dependency('slash', fallback : ['slash', 'slash_dep'], required: false)
@@ -23,10 +30,48 @@ if get_option('slash') == true
 	endif
 endif
 
+# Default FreeRTOS-based runtime implementation
+freertos_dep = []
+if get_option('freertos') == true
+	freertos_dep = dependency('freertos', fallback : ['freertos', 'freertos_dep'], required: false)
+	if freertos_dep.found()
+		csp_proc_src += files([
+			'src/proc_runtime_instructions.c',
+			'src/proc_runtime_FreeRTOS.c',
+			'src/proc_analyze.c',
+		])
+	endif
+endif
+
+# Configuration options
+reserved_proc_slots = get_option('RESERVED_PROC_SLOTS')
+max_proc_block_timeout_ms = get_option('MAX_PROC_BLOCK_TIMEOUT_MS')
+min_proc_block_period_ms = get_option('MIN_PROC_BLOCK_PERIOD_MS')
+max_proc_recursion_depth = get_option('MAX_PROC_RECURSION_DEPTH')
+max_proc_concurrent = get_option('MAX_PROC_CONCURRENT')
+
+if reserved_proc_slots != ''
+    add_project_arguments('-DRESERVED_PROC_SLOTS=' + reserved_proc_slots, language : 'c')
+endif
+if max_proc_block_timeout_ms != ''
+    add_project_arguments('-DMAX_PROC_BLOCK_TIMEOUT_MS=' + max_proc_block_timeout_ms, language : 'c')
+endif
+if min_proc_block_period_ms != ''
+    add_project_arguments('-DMIN_PROC_BLOCK_PERIOD_MS=' + min_proc_block_period_ms, language : 'c')
+endif
+if max_proc_recursion_depth != ''
+    add_project_arguments('-DMAX_PROC_RECURSION_DEPTH=' + max_proc_recursion_depth, language : 'c')
+endif
+if max_proc_concurrent != ''
+    add_project_arguments('-DMAX_PROC_CONCURRENT=' + max_proc_concurrent, language : 'c')
+endif
+
+
+# Final library
 csp_proc_lib = static_library('csp_proc',
 	sources: [csp_proc_src],
 	include_directories : csp_proc_inc,
-	dependencies : [csp_dep, slash_dep, param_dep],
+	dependencies : [csp_dep, param_dep, slash_dep, freertos_dep],
 	install : false
 )
 

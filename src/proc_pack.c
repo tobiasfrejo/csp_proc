@@ -3,6 +3,12 @@
 #include <string.h>
 #include <stdint.h>
 
+/**
+ * Calculate the size of a proc_t procedure in bytes
+ *
+ * @param procedure The procedure to calculate the size of
+ * @return The size of the procedure in bytes or -1 on failure
+ */
 int calc_proc_size(proc_t * procedure) {
 	int total_size = 0;
 	total_size += sizeof(procedure->instruction_count);
@@ -36,9 +42,11 @@ int calc_proc_size(proc_t * procedure) {
 			case PROC_CALL:
 				total_size += sizeof(procedure->instructions[i].instruction.call.procedure_slot);
 				break;
-			default:
-				printf("Unknown instruction type\n");
+			case PROC_NOOP:
 				break;
+			default:
+				printf("Unknown instruction type %d\n", procedure->instructions[i].type);
+				return -1;
 		}
 	}
 
@@ -109,6 +117,11 @@ int pack_proc_into_csp_packet(proc_t * procedure, csp_packet_t * packet) {
 				memcpy(packet->data + offset, &(procedure->instructions[i].instruction.call.procedure_slot), sizeof(uint8_t));
 				offset += sizeof(uint8_t);
 				break;
+			case PROC_NOOP:
+				break;
+			default:
+				printf("Unknown instruction type %d\n", procedure->instructions[i].type);
+				return -1;
 		}
 	}
 
@@ -174,8 +187,10 @@ int unpack_proc_from_csp_packet(proc_t * procedure, csp_packet_t * packet) {
 				memcpy(&procedure->instructions[i].instruction.call.procedure_slot, packet->data + offset, sizeof(uint8_t));
 				offset += sizeof(uint8_t);
 				break;
+			case PROC_NOOP:
+				break;
 			default:
-				printf("Unknown instruction type\n");
+				printf("Unknown instruction type %d\n", procedure->instructions[i].type);
 				return -1;
 		}
 	}
@@ -204,6 +219,7 @@ void proc_free_instruction(proc_instruction_t * instruction) {
 			free(instruction->instruction.binop.result);
 			break;
 		case PROC_CALL:
+		case PROC_NOOP:
 			break;
 		default:
 			printf("Unknown instruction type %d\n", instruction->type);
@@ -251,6 +267,8 @@ int proc_copy_instruction(proc_instruction_t * instruction, proc_instruction_t *
 			break;
 		case PROC_CALL:
 			copy->instruction.call.procedure_slot = instruction->instruction.call.procedure_slot;
+			break;
+		case PROC_NOOP:
 			break;
 		default:
 			printf("Unknown instruction type %d\n", instruction->type);

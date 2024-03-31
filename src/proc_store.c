@@ -1,5 +1,7 @@
 #include <csp_proc/proc_store.h>
 
+// TODO: locks
+
 proc_t proc_store[MAX_PROC_SLOT + 1] = {0};
 
 int delete_proc(uint8_t slot) {

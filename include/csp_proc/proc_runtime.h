@@ -6,12 +6,14 @@
 #include <csp_proc/proc_types.h>
 #include <csp_proc/proc_store.h>
 
-#ifndef MAX_PROC_BLOCK_TIMEOUT
-#define MAX_PROC_BLOCK_TIMEOUT (5700U)
-#endif
+// TODO: configurable as libparam params
+
+#ifndef MAX_PROC_BLOCK_TIMEOUT_MS
+#define MAX_PROC_BLOCK_TIMEOUT_MS (5000000U)
+#endif  // ~83 minutes
 
 #ifndef MIN_PROC_BLOCK_PERIOD_MS
-#define MIN_PROC_BLOCK_PERIOD_MS (50U)
+#define MIN_PROC_BLOCK_PERIOD_MS (250U)
 #endif
 
 #ifndef MAX_PROC_RECURSION_DEPTH

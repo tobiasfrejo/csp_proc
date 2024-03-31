@@ -25,13 +25,15 @@ Additionally, this adds the following commands to handle control-flow and operat
 - proc block <param a> <op> <param b> [node]
 	- Block execution of the procedure until the condition is met. <op> is one of: ==, !=, <, >, <=, >=
 - proc ifelse <param a> <op> <param b> [node]
-	- Skip the next instruction if the condition is not met. Skip the next instruction after that if the condition is met. <op> is one of: ==, !=, <, >, <=, >=
+	- Skip the next instruction if the condition is not met. Skip the next instruction after that if the condition is met. This instruction cannot be nested, i.e. the following two instructions cannot be ifelse. <op> is one of: ==, !=, <, >, <=, >=
+- proc noop
+	- No operation. Useful in combination with ifelse instructions.
 - proc set <param> <value> [node]
 	- Set the value of a parameter. The type of value is always inferred.
 - proc unop <param> <op> <result> [node]
 	- Apply unary operator on a parameter and store the result in <result>. <op> is one of: ++, --, !, -, idt, rmt
 - proc binop <param a> <op> <param b> <result> [node]
-	- Apply binary operator on parameters `a` and `b' and store the result in <result>. <op> is one of: +, -, *, /, %, <<, >>, &, |, ^, ~
+	- Apply binary operator on parameters `a` and `b' and store the result in <result>. <op> is one of: +, -, *, /, %, <<, >>, &, |, ^
 - proc call <procedure slot> [node]
 	- Insert instruction to run the procedure in the specified slot.
 */
@@ -89,7 +91,6 @@ binary_op_t parse_binary_op_enum(const char * str) {
 	if (strcmp(str, "&") == 0) return OP_AND;
 	if (strcmp(str, "|") == 0) return OP_OR;
 	if (strcmp(str, "^") == 0) return OP_XOR;
-	if (strcmp(str, "~") == 0) return OP_NOTB;
 	return -1;
 }
 
@@ -122,7 +123,6 @@ const char * binary_op_str[] = {
 	"&",   // OP_AND
 	"|",   // OP_OR
 	"^",   // OP_XOR
-	"~"    // OP_NOTB
 };
 
 int instruction_can_be_added() {
@@ -390,6 +390,9 @@ static int proc_list(struct slash * slash) {
 			case PROC_IFELSE:
 				printf("[node %d]\tifelse: %s %s %s\n", instruction.node, instruction.instruction.ifelse.param_a, comparison_op_str[instruction.instruction.ifelse.op], instruction.instruction.ifelse.param_b);
 				break;
+			case PROC_NOOP:
+				printf("-\t\tnoop\n");
+				break;
 			case PROC_SET:
 				printf("[node %d]\tset   : %s = %s\n", instruction.node, instruction.instruction.set.param, instruction.instruction.set.value);
 				break;
@@ -636,6 +639,34 @@ static int proc_ifelse(struct slash * slash) {
 	return SLASH_SUCCESS;
 }
 slash_command_sub(proc, ifelse, proc_ifelse, "<param a> <op> <param b> [node]", "");
+
+static int proc_noop(struct slash * slash) {
+	if (!instruction_can_be_added()) {
+		return SLASH_EINVAL;
+	}
+
+	optparse_t * parser = optparse_new("proc noop", "");
+	optparse_add_help(parser);
+
+	int argi = optparse_parse(parser, slash->argc - 1, (const char **)slash->argv + 1);
+	if (argi < 0) {
+		optparse_del(parser);
+		return SLASH_EINVAL;
+	}
+
+	proc_instruction_t proc_instruction;
+	proc_instruction.node = 0;
+	proc_instruction.type = PROC_NOOP;
+
+	current_procedure->instructions[current_procedure->instruction_count] = proc_instruction;
+	current_procedure->instruction_count++;
+
+	printf("Added noop instruction to procedure\n");
+
+	optparse_del(parser);
+	return SLASH_SUCCESS;
+}
+slash_command_sub(proc, noop, proc_noop, "", "");
 
 static int proc_set(struct slash * slash) {
 	unsigned int node = slash_dfl_node;
