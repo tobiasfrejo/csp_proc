@@ -1,4 +1,8 @@
-project('csp_proc', 'c')
+project('csp_proc', 'c', subproject_dir: 'lib', default_options: [
+	'c_std=gnu11',
+	'b_lto=false',
+	'default_library=static',
+])
 
 csp_dep = dependency('csp', fallback : ['csp', 'csp_dep'])
 param_dep = dependency('param', fallback : ['param', 'param_dep'])
@@ -76,3 +80,17 @@ csp_proc_lib = static_library('csp_proc',
 )
 
 csp_proc_dep = declare_dependency(include_directories : csp_proc_inc, link_with : csp_proc_lib)
+
+
+# Tests
+criterion_dep = dependency('criterion', required : false)
+if not criterion_dep.found()
+  error('Criterion not found (required for tests)')
+endif
+
+test_src = files([
+	'tests/test_proc_pack.c',
+])
+
+run_tests_executable = executable('run_tests', test_src, dependencies : [criterion_dep, csp_proc_dep, csp_dep, param_dep, slash_dep, freertos_dep])
+test('run_tests', run_tests_executable)
