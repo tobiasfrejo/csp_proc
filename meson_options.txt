@@ -1,3 +1,5 @@
+option('build_tests', type: 'boolean', value: false, description: 'Build the test suite')
+
 option('slash', type: 'boolean', value: false, description: 'Build slash (yields)', yield: true)
 option('freertos', type: 'boolean', value: false, description: 'Build the default FreeRTOS-based runtime (yields)', yield: true)
 option('proc_analysis', type: 'boolean', value: false, description: 'Build the analysis module')

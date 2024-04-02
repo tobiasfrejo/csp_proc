@@ -29,7 +29,7 @@ if get_option('slash') == true
 	slash_dep = dependency('slash', fallback : ['slash', 'slash_dep'], required: false)
 	if slash_dep.found()
 		csp_proc_src += files([
-			'src/slash/slash_csp_proc.c',	
+			'src/slash/slash_csp_proc.c',
 		])
 	endif
 endif
@@ -83,14 +83,30 @@ csp_proc_dep = declare_dependency(include_directories : csp_proc_inc, link_with 
 
 
 # Tests
-criterion_dep = dependency('criterion', required : false)
-if not criterion_dep.found()
-  error('Criterion not found (required for tests)')
+# NOTE: Requires "-Dslash:builtins=true -Dparam:list_dynamic=true"
+if get_option('build_tests')
+	criterion_dep = dependency('criterion', required : false)
+	if not criterion_dep.found()
+		error('Criterion not found (required for tests)')
+	endif
+
+	test_src = files([
+		'src/slash/slash_csp_proc.c',
+
+		'tests/test_client_server.c',
+		'tests/test_proc_pack.c',
+		'tests/test_slash_commands.c',
+	])
+
+	test_harness_inc = include_directories('tests/include')
+
+	test_slash_dep = dependency('slash', fallback : ['slash', 'slash_dep'], required: false)
+
+    run_tests_executable = executable(
+        'run_tests', test_src, build_by_default : false,
+        dependencies : [criterion_dep, csp_proc_dep, csp_dep, param_dep, test_slash_dep, freertos_dep],
+        include_directories : test_harness_inc,
+    )
+
+    test('run_tests', run_tests_executable)
 endif
-
-test_src = files([
-	'tests/test_proc_pack.c',
-])
-
-run_tests_executable = executable('run_tests', test_src, dependencies : [criterion_dep, csp_proc_dep, csp_dep, param_dep, slash_dep, freertos_dep])
-test('run_tests', run_tests_executable)

@@ -16,12 +16,22 @@ FROM ubuntu:22.04
 RUN apt-get update && apt-get install -y \
     python3 \
     python3-pip \
-    ninja-build \
     gcc \
     g++ \
     git \
-    meson \
-    libcriterion-dev
+    libcriterion-dev \
+    libcurl4-openssl-dev \
+    build-essential \
+    libsocketcan-dev \
+    can-utils \
+    libzmq3-dev \
+    libyaml-dev \
+    pkg-config \
+    fonts-powerline \
+    libelf-dev \
+    libbsd-dev
+
+RUN pip3 install meson ninja
 
 COPY --from=clang-format-builder /clang-format /usr/bin/
 
@@ -34,4 +44,7 @@ RUN git clone https://github.com/FreeRTOS/FreeRTOS-Kernel.git lib/freertos
 COPY . /csp_proc/
 
 RUN meson setup builddir \
+    -Dbuild_tests=true \
+    -Dslash:builtins=true \
+    -Dparam:list_dynamic=true \
     && meson compile -C builddir

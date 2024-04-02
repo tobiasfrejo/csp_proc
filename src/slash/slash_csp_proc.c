@@ -137,7 +137,7 @@ int instruction_can_be_added() {
 	return 1;
 }
 
-static int proc_new(struct slash * slash) {
+int proc_new(struct slash * slash) {
 	if (current_procedure != NULL) {
 		free_proc(current_procedure);
 		current_procedure = NULL;
@@ -157,7 +157,7 @@ static int proc_new(struct slash * slash) {
 }
 slash_command_sub(proc, new, proc_new, "", "");
 
-static int proc_del(struct slash * slash) {
+int proc_del(struct slash * slash) {
 	unsigned int proc_slot;
 	unsigned int node = slash_dfl_node;
 	unsigned int timeout = slash_dfl_timeout;
@@ -205,7 +205,7 @@ static int proc_del(struct slash * slash) {
 }
 slash_command_sub(proc, del, proc_del, "<procedure slot> [node]", "");
 
-static int proc_pull(struct slash * slash) {
+int proc_pull(struct slash * slash) {
 	unsigned int proc_slot;
 	unsigned int node = slash_dfl_node;
 	unsigned int timeout = slash_dfl_timeout;
@@ -261,7 +261,7 @@ static int proc_pull(struct slash * slash) {
 }
 slash_command_sub(proc, pull, proc_pull, "<procedure slot> [node]", "");
 
-static int proc_push(struct slash * slash) {
+int proc_push(struct slash * slash) {
 	if (current_procedure == NULL) {
 		printf("No active procedure. Use 'proc new' to create one.\n");
 		return SLASH_EINVAL;
@@ -313,7 +313,7 @@ static int proc_push(struct slash * slash) {
 }
 slash_command_sub(proc, push, proc_push, "<procedure slot> [node]", "");
 
-static int proc_size(struct slash * slash) {
+int proc_size(struct slash * slash) {
 	if (current_procedure == NULL) {
 		printf("No active procedure. Use 'proc new' to create one.\n");
 		return SLASH_EINVAL;
@@ -325,7 +325,7 @@ static int proc_size(struct slash * slash) {
 }
 slash_command_sub(proc, size, proc_size, "", "");
 
-static int proc_pop(struct slash * slash) {
+int proc_pop(struct slash * slash) {
 	if (current_procedure == NULL) {
 		printf("No active procedure. Use 'proc new' to create one.\n");
 		return SLASH_EINVAL;
@@ -373,7 +373,7 @@ static int proc_pop(struct slash * slash) {
 }
 slash_command_sub(proc, pop, proc_pop, "[instruction index]", "");
 
-static int proc_list(struct slash * slash) {
+int proc_list(struct slash * slash) {
 	if (current_procedure == NULL) {
 		printf("No active procedure. Use 'proc new' to create one.\n");
 		return SLASH_EINVAL;
@@ -415,7 +415,7 @@ static int proc_list(struct slash * slash) {
 }
 slash_command_sub(proc, list, proc_list, "", "");
 
-static int proc_slots(struct slash * slash) {
+int proc_slots(struct slash * slash) {
 	unsigned int node = slash_dfl_node;
 	unsigned int timeout = slash_dfl_timeout;
 	uint8_t slots[MAX_PROC_SLOT + 1];
@@ -453,7 +453,7 @@ static int proc_slots(struct slash * slash) {
 }
 slash_command_sub(proc, slots, proc_slots, "[node]", "");
 
-static int proc_run(struct slash * slash) {
+int proc_run(struct slash * slash) {
 	unsigned int proc_slot;
 	unsigned int node = slash_dfl_node;
 	unsigned int timeout = slash_dfl_timeout;
@@ -500,7 +500,7 @@ static int proc_run(struct slash * slash) {
 }
 slash_command_sub(proc, run, proc_run, "<procedure slot> [node]", "");
 
-static int proc_block(struct slash * slash) {
+int proc_block(struct slash * slash) {
 	unsigned int node = slash_dfl_node;
 	if (!instruction_can_be_added()) {
 		return SLASH_EINVAL;
@@ -570,7 +570,7 @@ static int proc_block(struct slash * slash) {
 }
 slash_command_sub(proc, block, proc_block, "<param a> <op> <param b> [node]", "");
 
-static int proc_ifelse(struct slash * slash) {
+int proc_ifelse(struct slash * slash) {
 	unsigned int node = slash_dfl_node;
 	if (!instruction_can_be_added()) {
 		return SLASH_EINVAL;
@@ -640,7 +640,7 @@ static int proc_ifelse(struct slash * slash) {
 }
 slash_command_sub(proc, ifelse, proc_ifelse, "<param a> <op> <param b> [node]", "");
 
-static int proc_noop(struct slash * slash) {
+int proc_noop(struct slash * slash) {
 	if (!instruction_can_be_added()) {
 		return SLASH_EINVAL;
 	}
@@ -668,7 +668,7 @@ static int proc_noop(struct slash * slash) {
 }
 slash_command_sub(proc, noop, proc_noop, "", "");
 
-static int proc_set(struct slash * slash) {
+int proc_set(struct slash * slash) {
 	unsigned int node = slash_dfl_node;
 	if (!instruction_can_be_added()) {
 		return SLASH_EINVAL;
@@ -725,7 +725,7 @@ static int proc_set(struct slash * slash) {
 }
 slash_command_sub(proc, set, proc_set, "<param> <value> [node]", "");
 
-static int proc_unop(struct slash * slash) {
+int proc_unop(struct slash * slash) {
 	unsigned int node = slash_dfl_node;
 	if (!instruction_can_be_added()) {
 		return SLASH_EINVAL;
@@ -794,7 +794,7 @@ static int proc_unop(struct slash * slash) {
 }
 slash_command_sub(proc, unop, proc_unop, "<param> <op> <result> [node]", "");
 
-static int proc_binop(struct slash * slash) {
+int proc_binop(struct slash * slash) {
 	unsigned int node = slash_dfl_node;
 	if (!instruction_can_be_added()) {
 		return SLASH_EINVAL;
@@ -871,7 +871,7 @@ static int proc_binop(struct slash * slash) {
 }
 slash_command_sub(proc, binop, proc_binop, "<param a> <op> <param b> <result> [node]", "");
 
-static int proc_call(struct slash * slash) {
+int proc_call(struct slash * slash) {
 	unsigned int node = slash_dfl_node;
 	if (!instruction_can_be_added()) {
 		return SLASH_EINVAL;
