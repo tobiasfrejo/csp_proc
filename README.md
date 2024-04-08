@@ -4,7 +4,7 @@
 
 Lightweight, programmable procedures with a libcsp- and libparam-native runtime. This provides remote control of libparam-based coordination between nodes in a CSP network, essentially exposing the network as single programmable unit.
 
-The library has a relatively small footprint suitable for microcontrollers, requiring no external libraries other than libcsp and libparam themselves for the core of the library. However, currently, the only runtime implementation relies on FreeRTOS.
+The library has a relatively small footprint suitable for microcontrollers, requiring no external libraries other than libcsp and libparam themselves for the core of the library. As of writing, the library provides 2 default runtime implementations which depend on FreeRTOS and POSIX respectively.
 
 See also [https://discosat.github.io/csp_proc/](https://discosat.github.io/csp_proc/) for more information.
 
@@ -148,7 +148,7 @@ After which the 10th term of the Fibonacci sequence can be read from the `rx0` r
 ```bash
 get rx0
 ```
-Naturally, this assumes `n`, `_zero`, `rx0`, `rx1`, and `rx2` are available as integer libparam parameters on the node. Also note that with the default FreeRTOS-based runtime, it is recommended to divide complex routines into small units of work, where any calls to other procedures are done in the last instruction (or second-last if preceded by ifelse) to avoid nesting function calls.
+Naturally, this assumes `n`, `_zero`, `rx0`, `rx1`, and `rx2` are available as integer libparam parameters on the node. Also note that with the default FreeRTOS/POSIX-based runtimes, it is recommended to divide complex routines into small units of work, where any calls to other procedures are done in the last instruction (or second-last if preceded by ifelse) to avoid nesting function calls.
 
 # Build Environment
 Refer to the Dockerfile for a reference build environment, including code formatter. It can be brought up like so:
