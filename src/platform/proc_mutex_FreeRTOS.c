@@ -1,4 +1,5 @@
 #include <csp_proc/proc_mutex.h>
+#include <csp_proc/proc_memory.h>
 #include <FreeRTOS.h>
 #include <semphr.h>
 
@@ -7,10 +8,10 @@ struct proc_mutex_t {
 };
 
 proc_mutex_t * proc_mutex_create() {
-	proc_mutex_t * mutex = pvPortMalloc(sizeof(proc_mutex_t));
+	proc_mutex_t * mutex = proc_malloc(sizeof(proc_mutex_t));
 	mutex->handle = xSemaphoreCreateMutex();
 	if (mutex->handle == NULL) {
-		vPortFree(mutex);
+		proc_free(mutex);
 		return NULL;
 	}
 	return mutex;
@@ -32,5 +33,5 @@ int proc_mutex_give(proc_mutex_t * mutex) {
 
 void proc_mutex_destroy(proc_mutex_t * mutex) {
 	vSemaphoreDelete(mutex->handle);
-	vPortFree(mutex);
+	proc_free(mutex);
 }
