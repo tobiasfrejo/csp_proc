@@ -162,16 +162,19 @@ double float_abs(double x) {
 }
 
 int proc_param_scan_offset(char * arg) {
+	char * arg_copy = proc_strdup(arg);
 	char * saveptr;
 	char * token;
 	int offset = -1;
 
-	strtok_r(arg, "[", &saveptr);
+	strtok_r(arg_copy, "[", &saveptr);
 	token = strtok_r(NULL, "[", &saveptr);
 	if (token != NULL) {
 		sscanf(token, "%d", &offset);
 		*token = '\0';
 	}
+
+	proc_free(arg_copy);
 
 	return offset;
 }
