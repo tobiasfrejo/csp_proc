@@ -188,7 +188,7 @@ param_t * proc_fetch_param(char * param_name, int node) {
 	int offset = proc_param_scan_offset(param_name_copy);
 	if (offset != -1) {
 		int index_length = snprintf(NULL, 0, "%d", offset);
-		param_name_copy[strlen(param_name_copy) - index_length + 1] = '\0';
+		param_name_copy[strlen(param_name_copy) - (index_length + 2)] = '\0';
 	}
 
 	csp_iface_t * ifaces = csp_iflist_get();
